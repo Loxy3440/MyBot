@@ -1673,13 +1673,20 @@ async def on_command_error(ctx, error):
         print(f"Command error: {error}")
         await ctx.send(f"❌ An error occurred: {error}")
 
-# Keep-Alive System
-from keep_alive import keep_alive
-keep_alive()
-
+# ÖNCE dotenv yükle
 try:
     load_dotenv()
 except ImportError:
     print("python-dotenv not installed, skipping .env load")
+
+# SONRA keep_alive çağır
+from keep_alive import keep_alive
+keep_alive()
+
+# En son botu çalıştır
 bot_token = os.getenv("DISCORD_TOKEN")
-bot.run(bot_token)
+if bot_token:
+    bot.run(bot_token)
+else:
+    print("HATA: DISCORD_TOKEN environment variable bulunamadı!")
+    print("Render Environment Variables kontrol et!")
