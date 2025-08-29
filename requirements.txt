@@ -9,6 +9,6 @@ asyncio
 aiohttp
 ffmpeg-python
 pyyaml
-googletrans==4.0.0-rc1
+translators==6.0.4
 yt-dlp
 beautifulsoup4
