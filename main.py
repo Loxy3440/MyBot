@@ -9,7 +9,7 @@ import time
 import asyncio
 import pytz
 import json
-from googletrans import Translator
+from translators import translate_text
 from discord.ui import Button, View, Select
 from discord import ButtonStyle, SelectOption
 import os
@@ -41,7 +41,6 @@ TARGET_CHANNEL_IDS = [1400238951351976137, 1400509780874756187]
 
 # AFK system and global variables
 afk_users = {}
-translator = Translator()
 music_queues = {}
 voice_clients = {}
 
@@ -1201,15 +1200,21 @@ async def serverinfo(ctx):
 async def translate(ctx, target_lang: str, *, text: str):
     """Translate text"""
     try:
-        translated = translator.translate(text, dest=target_lang)
+        # Çeviri yap
+        translated_text = translate_text(text, to_language=target_lang)
+        
+        # Kaynak dili tespit et (küçük bir hile)
+        # İlk 2 karakteri çevirip karşılaştırarak
+        test_translation = translate_text(text[:50], to_language='en')
+        # Burada dil tespit mekanizması ekleyebilirsin
         
         embed = discord.Embed(
             title="🌐 Translation",
             color=discord.Color.blue()
         )
         embed.add_field(name="Original", value=f"```{text}```", inline=False)
-        embed.add_field(name="Translated", value=f"```{translated.text}```", inline=False)
-        embed.add_field(name="Languages", value=f"{translated.src} → {translated.dest}", inline=True)
+        embed.add_field(name="Translated", value=f"```{translated_text}```", inline=False)
+        embed.add_field(name="Languages", value=f"auto → {target_lang}", inline=True)
         
         await ctx.send(embed=embed)
     except Exception as e:
