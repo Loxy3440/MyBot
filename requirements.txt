@@ -1,3 +1,4 @@
+cgi
 discord.py
 python-dotenv
 flask
