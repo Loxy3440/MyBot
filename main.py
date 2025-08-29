@@ -1,5 +1,5 @@
 import socket
-HOST = '0.0.0.0'  # localhost
+HOST = '10000'  # localhost
 PORT = 8000
 
 
