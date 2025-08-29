@@ -1,3 +1,38 @@
+import socket
+HOST = '127.0.0.1'  # localhost
+PORT = 8000
+
+Create a socket object
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    # Bind the socket to the host and port
+    s.bind((HOST, PORT))
+    # Listen for incoming connections
+    s.listen()
+
+    print(f"Serving on http://{HOST}:{PORT}")
+    print("Go to your browser to view the page.")
+
+    while True:
+        # Accept a new connection
+        conn, addr = s.accept()
+        with conn:
+            print(f"Connected by {addr}")
+
+Receive the request (we don't need to parse it for this simple case)
+            data = conn.recv(1024)
+
+Prepare the HTTP response
+            html_content = "<h1>Bot is running!</h1>"
+            http_response = (
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/html\r\n"
+                "Content-Length: " + str(len(html_content)) + "\r\n"
+                "\r\n"
+                + html_content
+            )
+
+Send the response
+            conn.sendall(http_response.encode('utf-8'))
 from dotenv import load_dotenv
 from keep_alive import keep_alive
 import discord
