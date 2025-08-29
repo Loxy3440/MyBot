@@ -2,7 +2,6 @@ import socket
 HOST = '10000'  # localhost
 PORT = 8000
 
-
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     # Bind the socket to the host and port
     s.bind((HOST, PORT))
@@ -30,7 +29,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 "\r\n"
                 + html_content
             )
-
 
             conn.sendall(http_response.encode('utf-8'))
 from dotenv import load_dotenv
