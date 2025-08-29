@@ -6,3 +6,9 @@ pytz
 requests
 datetime
 asyncio
+aiohttp
+ffmpeg-python
+pyyaml
+googletrans==4.0.0-rc1
+yt-dlp
+beautifulsoup4
