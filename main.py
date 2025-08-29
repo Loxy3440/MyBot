@@ -1,8 +1,15 @@
 import socket
-HOST = '10000'  # localhost
-PORT = 8000
+import os
 
+# Render'da çalışıyorsak 0.0.0.0, local'de ise 127.0.0.1 kullan
+HOST = '0.0.0.0' if 'RENDER' in os.environ else '127.0.0.1'
+PORT = 10000  # Portu 10000 olarak değiştirdim
+
+# Create a socket object
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    # Aynı portu tekrar kullanabilmek için
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    
     # Bind the socket to the host and port
     s.bind((HOST, PORT))
     # Listen for incoming connections
@@ -10,27 +17,37 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     print(f"Serving on http://{HOST}:{PORT}")
     print("Go to your browser to view the page.")
+    print("Press Ctrl+C to stop the server.")
 
-    while True:
-        # Accept a new connection
-        conn, addr = s.accept()
-        with conn:
-            print(f"Connected by {addr}")
+    try:
+        while True:
+            # Accept a new connection
+            conn, addr = s.accept()
+            with conn:
+                print(f"Connected by {addr}")
 
- 
-            data = conn.recv(1024)
+                # Receive the request
+                data = conn.recv(4096)
+                if data:
+                    print(f"Received request: {data.decode('utf-8')[:100]}...")  # İlk 100 karakteri göster
 
+                # Prepare the HTTP response
+                html_content = "<h1>Bot is running!</h1><p>Server is working correctly on port 10000.</p>"
+                http_response = (
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Type: text/html\r\n"
+                    "Content-Length: " + str(len(html_content)) + "\r\n"
+                    "Connection: close\r\n"
+                    "\r\n"
+                    + html_content
+                )
 
-            html_content = "<h1>Bot is running!</h1>"
-            http_response = (
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/html\r\n"
-                "Content-Length: " + str(len(html_content)) + "\r\n"
-                "\r\n"
-                + html_content
-            )
-
-            conn.sendall(http_response.encode('utf-8'))
+                # Send the response
+                conn.sendall(http_response.encode('utf-8'))
+                
+    except KeyboardInterrupt:
+        print("\nServer is shutting down.")
+        
 from dotenv import load_dotenv
 from keep_alive import keep_alive
 import discord
