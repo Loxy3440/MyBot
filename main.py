@@ -18,7 +18,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         with conn:
             print(f"Connected by {addr}")
 
-Receive the request (we don't need to parse it for this simple case)
+Receive the request 
             data = conn.recv(1024)
 
 Prepare the HTTP response
