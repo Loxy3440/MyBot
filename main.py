@@ -2,7 +2,7 @@ import socket
 HOST = '127.0.0.1'  # localhost
 PORT = 8000
 
-Create a socket object
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     # Bind the socket to the host and port
     s.bind((HOST, PORT))
@@ -18,10 +18,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         with conn:
             print(f"Connected by {addr}")
 
-Receive the request 
+ 
             data = conn.recv(1024)
 
-Prepare the HTTP response
+
             html_content = "<h1>Bot is running!</h1>"
             http_response = (
                 "HTTP/1.1 200 OK\r\n"
@@ -31,7 +31,7 @@ Prepare the HTTP response
                 + html_content
             )
 
-Send the response
+
             conn.sendall(http_response.encode('utf-8'))
 from dotenv import load_dotenv
 from keep_alive import keep_alive
