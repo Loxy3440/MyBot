@@ -1730,37 +1730,34 @@ except ImportError:
 from keep_alive import keep_alive
 keep_alive()
 
-# En son botu çalıştır
-# Token kontrolü yap
+# Token kontrol fonksiyonu
 def check_token():
     token = os.getenv("DISCORD_TOKEN")
     if not token:
         print("❌ HATA: DISCORD_TOKEN environment variable bulunamadı!")
         print("📝 Render Dashboard → Environment Variables → DISCORD_TOKEN ekle")
-        return False
+        return None
     
-    # Token formatını kontrol et
-    if not token.startswith('MT') or len(token) < 50:
+    if len(token) < 50:
         print("❌ HATA: Geçersiz token formatı!")
         print("🔑 Discord Developer Portal'dan yeni token al: https://discord.com/developers/applications")
-        print(f"📋 Mevcut token: {token[:20]}... (ilk 20 karakter)")
-        return False
+        print(f"📋 Mevcut token (ilk 10 karakter): {token[:10]}...")
+        return None
     
     print("✅ Token formatı doğru görünüyor")
-    return True
+    return token
 
 # Ana başlatma
 if __name__ == "__main__":
     print("🔍 Token kontrol ediliyor...")
-    
-    if check_token():
+
+    bot_token = check_token()
+    if bot_token:
         print("🚀 Bot başlatılıyor...")
         try:
-            load_dotenv()
-            keep_alive()
-            bot_token = os.getenv("DISCORD_TOKEN")
             bot.run(bot_token)
         except Exception as e:
             print(f"❌ Bot başlatma hatası: {e}")
     else:
         print("❌ Token hatası nedeniyle bot başlatılamadı!")
+        
