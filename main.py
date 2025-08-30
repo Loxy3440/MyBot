@@ -1,38 +1,36 @@
 import socket
 import os
 
+
+
 # Render'ın atadığı portu kullan, yoksa 10000 kullan
 HOST = '0.0.0.0'
 PORT = int(os.environ.get('PORT', 10000))  # Render PORT'u veya 10000
 
 # Create a socket object
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    # Aynı portu tekrar kullanabilmek için
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    
-    # Bind the socket to the host and port
-    s.bind((HOST, PORT))
-    # Listen for incoming connections
-    s.listen()
+def run_socket_server():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        # Aynı portu tekrar kullanabilmek için
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        
+        # Bind the socket to the host and port
+        s.bind((HOST, PORT))
+        s.listen()
 
-    print(f"Serving on http://{HOST}:{PORT}")
-    print("Go to your browser to view the page.")
-    print("Press Ctrl+C to stop the server.")
+        print(f"Serving on http://{HOST}:{PORT}")
+        print("Go to your browser to view the page.")
+        print("Press Ctrl+C to stop the server.")
 
-    try:
         while True:
-            # Accept a new connection
             conn, addr = s.accept()
             with conn:
                 print(f"Connected by {addr}")
-
-                # Receive the request
                 data = conn.recv(4096)
                 if data:
                     print(f"Received request: {data.decode('utf-8')[:100]}...")  # İlk 100 karakteri göster
 
                 # Prepare the HTTP response
-                html_content = "<h1>Bot is running!</h1><p>Server is working correctly on port {PORT}.</p>"
+                html_content = f"<h1>Bot is running!</h1><p>Server is working correctly on port {PORT}.</p>"
                 http_response = (
                     "HTTP/1.1 200 OK\r\n"
                     "Content-Type: text/html\r\n"
@@ -41,12 +39,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     "\r\n"
                     + html_content
                 )
-
-                # Send the response
                 conn.sendall(http_response.encode('utf-8'))
-                
-    except KeyboardInterrupt:
-        print("\nServer is shutting down.")
         
 from dotenv import load_dotenv
 from keep_alive import keep_alive
