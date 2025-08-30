@@ -1686,7 +1686,7 @@ async def say(ctx, *, message):
 @commands.is_owner()
 async def restart(ctx):
     """Botu yeniden başlat (Render uyumlu)"""
-    confirm_view = View(timeout=30)
+    confirm_view = discord.ui.View(timeout=30)  # ✅ discord.ui.View olacak!
     
     async def confirm_callback(interaction):
         if interaction.user.id != ctx.author.id:
@@ -1714,8 +1714,8 @@ async def restart(ctx):
         await interaction.message.delete()
     
     # Butonlar
-    confirm_btn = Button(label="✅ Onayla", style=ButtonStyle.green)
-    cancel_btn = Button(label="❌ İptal", style=ButtonStyle.red)
+    confirm_btn = discord.ui.Button(label="✅ Onayla", style=discord.ButtonStyle.green)
+    cancel_btn = discord.ui.Button(label="❌ İptal", style=discord.ButtonStyle.red)
     
     confirm_btn.callback = confirm_callback
     cancel_btn.callback = cancel_callback
