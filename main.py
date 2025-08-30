@@ -1676,28 +1676,51 @@ async def activity(ctx, activity_type: str, *, text: str):
 @bot.command()
 @commands.is_owner()
 async def restart(ctx):
-    """Botu yeniden başlat (onaylı, loglu)"""
+    """Botu yeniden başlat (Render uyumlu)"""
     confirm_view = View(timeout=30)
+    
     async def confirm_callback(interaction):
         if interaction.user.id != ctx.author.id:
             await interaction.response.send_message("Sadece komutu kullanan onaylayabilir!", ephemeral=True)
             return
-        await interaction.response.send_message("Bot yeniden başlatılıyor...", ephemeral=True)
+            
+        await interaction.response.send_message("🔄 **Bot Yeniden Başlatılıyor...**", ephemeral=True)
+        
+        # Log gönder
         await send_log_embed(
             "Bot Restarted 🔄",
             f"Restart by: {ctx.author.mention} ({ctx.author.id})",
             discord.Color.orange()
         )
+        
+        # Render'da çalışacak restart yöntemi
+        print("🔄 Manuel restart için Render Dashboard'a gidin...")
+        await asyncio.sleep(2)
+        
+        # Botu kapat (Render otomatik restart eder)
         await bot.close()
-        os.execv(sys.executable, ['python'] + sys.argv)
-    confirm_btn = Button(label="Onayla", style=ButtonStyle.green)
+        
+    async def cancel_callback(interaction):
+        await interaction.response.send_message("❌ Restart iptal edildi.", ephemeral=True)
+        await interaction.message.delete()
+    
+    # Butonlar
+    confirm_btn = Button(label="✅ Onayla", style=ButtonStyle.green)
+    cancel_btn = Button(label="❌ İptal", style=ButtonStyle.red)
+    
     confirm_btn.callback = confirm_callback
+    cancel_btn.callback = cancel_callback
+    
     confirm_view.add_item(confirm_btn)
+    confirm_view.add_item(cancel_btn)
+    
     embed = discord.Embed(
-        title="Botu Yeniden Başlat",
-        description="Botu yeniden başlatmak istediğine emin misin?",
+        title="🔄 Botu Yeniden Başlat",
+        description="Botu yeniden başlatmak istediğine emin misin?\n\n"
+                   "**Not:** Render'da manuel restart gerekebilir!",
         color=discord.Color.orange()
     )
+    
     await ctx.send(embed=embed, view=confirm_view)
 
 @bot.command()
