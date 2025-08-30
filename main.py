@@ -1686,7 +1686,7 @@ async def say(ctx, *, message):
 @commands.is_owner()
 async def restart(ctx):
     """Botu yeniden başlat (Render uyumlu)"""
-    confirm_view = discord.ui.View(timeout=30)  # ✅ discord.ui.View olacak!
+    confirm_view = discord.ui.View(timeout=30)
     
     async def confirm_callback(interaction):
         if interaction.user.id != ctx.author.id:
@@ -1695,18 +1695,14 @@ async def restart(ctx):
             
         await interaction.response.send_message("🔄 **Bot Yeniden Başlatılıyor...**", ephemeral=True)
         
-        # Log gönder
         await send_log_embed(
             "Bot Restarted 🔄",
             f"Restart by: {ctx.author.mention} ({ctx.author.id})",
             discord.Color.orange()
         )
         
-        # Render'da çalışacak restart yöntemi
         print("🔄 Manuel restart için Render Dashboard'a gidin...")
         await asyncio.sleep(2)
-        
-        # Botu kapat (Render otomatik restart eder)
         await bot.close()
         
     async def cancel_callback(interaction):
@@ -1725,10 +1721,11 @@ async def restart(ctx):
     
     embed = discord.Embed(
         title="🔄 Botu Yeniden Başlat",
-        description="Botu yeniden başlatmak istediğine emin misin?\n\n"
-                   "**Not:** Render'da manuel restart gerekebilir!",
+        description="Botu yeniden başlatmak istediğine emin misin?",
         color=discord.Color.orange()
     )
+    
+    await ctx.send(embed=embed, view=confirm_view)
     
     await ctx.send(embed=embed, view=confirm_view)
 
