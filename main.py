@@ -1673,6 +1673,15 @@ async def activity(ctx, activity_type: str, *, text: str):
     await bot.change_presence(activity=activities[activity_type.lower()])
     await ctx.send(f"✅ Activity updated: {activity_type} {text}")
 
+
+
+@bot.command()
+@commands.is_owner()
+async def say(ctx, *, message):
+    """Make bot say something (Owner only)"""
+    await ctx.message.delete()
+    await ctx.send(message)
+
 @bot.command()
 @commands.is_owner()
 async def restart(ctx):
@@ -1722,13 +1731,6 @@ async def restart(ctx):
     )
     
     await ctx.send(embed=embed, view=confirm_view)
-
-@bot.command()
-@commands.is_owner()
-async def say(ctx, *, message):
-    """Make bot say something (Owner only)"""
-    await ctx.message.delete()
-    await ctx.send(message)
 
 @bot.command()
 async def remember(ctx, time_str: str, *, message: str):
