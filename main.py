@@ -245,20 +245,45 @@ async def ping_server():
 async def on_ready():
     print(f'Bot logged in: {bot.user}')
     await bot.change_presence(activity=discord.Game(name="!help"))
+
+    # BİLDİRİM GÖNDER - SADECE SANA
+    owner = await bot.fetch_user(OWNER_ID)  # SENİN ID'N
+    try:
+        embed = discord.Embed(
+            title="✅ BOT AKTİF!",
+            description=f"**{bot.user.name}** başarıyla çevrimiçi oldu!",
+            color=discord.Color.green(),
+            timestamp=datetime.now()
+        )
+        
+        embed.add_field(name="🆔 Bot ID", value=bot.user.id, inline=True)
+        embed.add_field(name="📊 Sunucu Sayısı", value=len(bot.guilds), inline=True)
+        embed.add_field(name="⏰ Başlangıç", value=f"<t:{int(start_time)}:R>", inline=False)
+        embed.add_field(name="🌐 Uptime", value=f"`{int(time.time() - start_time)}s`", inline=True)
+        embed.add_field(name="📡 Ping", value=f"`{round(bot.latency * 1000)}ms`", inline=True)
+        
+        embed.set_thumbnail(url=bot.user.avatar.url if bot.user.avatar else bot.user.default_avatar.url)
+        embed.set_footer(text="Bot Aktif Bildirimi")
+        
+        await owner.send(embed=embed)
+        print(f"✅ Bildirim gönderildi: {owner}")
+        
+    except Exception as e:
+        print(f"❌ Bildirim gönderilemedi: {e}")
     
     # Try voice connection in background
     asyncio.create_task(delayed_voice_connect())
     
     await send_log_embed(
-        "Bot Started",
-        "Bot successfully started, attempting voice connection...",
+        "Bot Started ✅",
+        "Bot successfully started with owner notification!",
         discord.Color.green()
     )
     ping_server.start()
     
     # Console info
     turkey_time = datetime.now(pytz.timezone('Europe/Istanbul')).strftime('%H:%M:%S')
-    print(f"[{turkey_time}] 24/7 keep alive system active!")
+    print(f"[{turkey_time}] 24/7 system active! - Owner notified")
 
 async def delayed_voice_connect():
     """Connect to voice after a delay to avoid startup race conditions"""
