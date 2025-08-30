@@ -1,9 +1,9 @@
 import socket
 import os
 
-# Render'da çalışıyorsak 0.0.0.0, local'de ise 127.0.0.1 kullan
-HOST = '0.0.0.0' if 'RENDER' in os.environ else '127.0.0.1'
-PORT = 10000  # Portu 10000 olarak değiştirdim
+# Render'ın atadığı portu kullan, yoksa 10000 kullan
+HOST = '0.0.0.0'
+PORT = int(os.environ.get('PORT', 10000))  # Render PORT'u veya 10000
 
 # Create a socket object
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -32,7 +32,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     print(f"Received request: {data.decode('utf-8')[:100]}...")  # İlk 100 karakteri göster
 
                 # Prepare the HTTP response
-                html_content = "<h1>Bot is running!</h1><p>Server is working correctly on port 10000.</p>"
+                html_content = "<h1>Bot is running!</h1><p>Server is working correctly on port {PORT}.</p>"
                 http_response = (
                     "HTTP/1.1 200 OK\r\n"
                     "Content-Type: text/html\r\n"
