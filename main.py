@@ -1734,9 +1734,36 @@ from keep_alive import keep_alive
 keep_alive()
 
 # En son botu çalıştır
-bot_token = os.getenv("DISCORD_TOKEN")
-if bot_token:
-    bot.run(bot_token)
-else:
-    print("HATA: DISCORD_TOKEN environment variable bulunamadı!")
-    print("Render Environment Variables kontrol et!")
+# Token kontrolü yap
+def check_token():
+    token = os.getenv("DISCORD_TOKEN")
+    if not token:
+        print("❌ HATA: DISCORD_TOKEN environment variable bulunamadı!")
+        print("📝 Render Dashboard → Environment Variables → DISCORD_TOKEN ekle")
+        return False
+    
+    # Token formatını kontrol et
+    if not token.startswith('MT') or len(token) < 50:
+        print("❌ HATA: Geçersiz token formatı!")
+        print("🔑 Discord Developer Portal'dan yeni token al: https://discord.com/developers/applications")
+        print(f"📋 Mevcut token: {token[:20]}... (ilk 20 karakter)")
+        return False
+    
+    print("✅ Token formatı doğru görünüyor")
+    return True
+
+# Ana başlatma
+if __name__ == "__main__":
+    print("🔍 Token kontrol ediliyor...")
+    
+    if check_token():
+        print("🚀 Bot başlatılıyor...")
+        try:
+            load_dotenv()
+            keep_alive()
+            bot_token = os.getenv("DISCORD_TOKEN")
+            bot.run(bot_token)
+        except Exception as e:
+            print(f"❌ Bot başlatma hatası: {e}")
+    else:
+        print("❌ Token hatası nedeniyle bot başlatılamadı!")
